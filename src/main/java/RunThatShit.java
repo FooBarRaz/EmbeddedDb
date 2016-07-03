@@ -1,3 +1,4 @@
+import org.apache.commons.lang3.StringUtils;
 import org.h2.tools.Server;
 
 import java.sql.SQLException;
@@ -13,13 +14,16 @@ public class RunThatShit {
 
         Server server = null;
 //        try {
-//            server = Server.createTcpServer(
-//                    "-tcpPort", "9123", "-tcpAllowOthers").start();
+////            server = Server.shutdownTcpServer();
+//////            server = Server.createTcpServer(
+//////                    "-tcpPort", "9123", "-tcpAllowOthers").start();
 //        } catch (SQLException e) {
 //
 //        }
 
         new DatabaseHelper();
+
+
 
         boolean keepRunning = true;
         while (keepRunning) {
@@ -27,7 +31,7 @@ public class RunThatShit {
             Scanner scanner = new Scanner(System.in);
 
             String next = scanner.next();
-            keepRunning = next.toUpperCase() != "Y";
+            keepRunning = !StringUtils.equalsIgnoreCase("Y", next);
         }
 //        server.stop();
 
