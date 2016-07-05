@@ -2,40 +2,58 @@ import org.h2.jdbcx.JdbcConnectionPool;
 import org.h2.tools.Server;
 import org.skife.jdbi.v2.DBI;
 import org.skife.jdbi.v2.Handle;
+import org.skife.jdbi.v2.Update;
 
 import javax.sql.DataSource;
+import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
-public class EmbeddedDatabaseHelper {
+public class EmbeddedDataBaseHelper implements Runnable {
 
     private Server server;
+    private JdbcConnectionPool connectionPool;
 
-    public EmbeddedDatabaseHelper() {
-        server = null;
-        try {
-            server = Server.createTcpServer(
-                    "-tcpPort", "9192", "-tcpAllowOthers").start();
-        } catch (SQLException e) {
+    public EmbeddedDataBaseHelper() throws SQLException {
 
-        }
 
     }
 
-    public DataSource getDataSource() {
+    public void insertTestData(String testData) throws SQLException {
+//        connectionPool.getM
 
-        JdbcConnectionPool cp = JdbcConnectionPool.
-                create("jdbc:h2:~/Documents/dev/EmbeddedDb/testdb0;AUTO_SERVER=TRUE", "sa", "");
+        Handle connectionHandler = DBI.open(getDataSource());
+        Update statement = connectionHandler.createStatement("insert into foobar (name) values (:name)").bind("name", testData);
 
+        statement.execute();
+        connectionHandler.commit();
+        connectionHandler.close();
 
-//        Handle connectionHandle = DBI.open(cp);
-//        connectionHandle.execute("create table if not exists foobar (id int primary key auto_increment, name varchar(100))");
-//        connectionHandle.execute("insert into foobar (name) values (?)", "Jeff");
-//        connectionHandle.close();
+    }
 
-        return cp;
+    public JdbcConnectionPool getDataSource() {
+
+        if (connectionPool == null) {
+            connectionPool = JdbcConnectionPool.
+                    create("jdbc:h2:tcp://localhost:9123/~/dev/DbTest/testdb1", "sa", "");
+
+        }
+
+        return connectionPool;
     }
 
     public void stopServer() {
         server.stop();
+    }
+
+    public void run() {
+        server = null;
+        try {
+            server = Server.createTcpServer(
+                    "-tcp", "-tcpPort", "9123", "-tcpAllowOthers").start();
+        } catch (SQLException e) {
+
+        }
     }
 }

@@ -10,18 +10,17 @@ import java.util.Scanner;
 public class RunThatShit {
 
 
-    public static void main(String[] args) {
+    public static void  main(String[] args) {
 
         Server server = null;
-//        try {
-////            server = Server.shutdownTcpServer();
-//////            server = Server.createTcpServer(
-//////                    "-tcpPort", "9123", "-tcpAllowOthers").start();
-//        } catch (SQLException e) {
-//
-//        }
+        try {
+           Server.createTcpServer(
+                    "-tcpPort", "9123", "-tcpAllowOthers").start();
+        } catch (SQLException e) {
 
-        new DatabaseHelper();
+        }
+
+
 
 
 
